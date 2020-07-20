@@ -2,9 +2,11 @@
 Write a module docstring here
 """
 
+import os
+import sys
+
 __author__ = "Boris Barkan"
 
-gold = 0
 
 def pacman(input_file):
     """ Use this function to format your input/output arguments. Be sure not to change the order of the output arguments. 
@@ -19,91 +21,90 @@ def pacman(input_file):
         3. coins_collected (int) = the number of coins that have been collected by Pacman across all movements
     """
 
-    #read file
-    fp = open(input_file, 'r')
+    #read file from same folder
+    fp = open(os.path.join(sys.path[0], input_file), 'r')
 
+    
+    #initialize grid attributes, coin count, position, moves and so on. 
+    global grid
     gridX =0
     gridY =0
 
-    #initial position
+    global coin
+    coin = 0   
+
     global position
-    position = 0 , 0
-    
+    position = 0 , 0 
+
     moves =""
     wallList= []
-    global grid
 
+
+    #read lines of the file for instructions. 
     line = fp.readline()
     cnt = 1
     while line:
-        if cnt == 1:
+        if cnt == 1:    #get grid size
             arguments = line.strip().split()
             gridX = int(arguments[0])
             gridY = int(arguments[1])  
             grid= [[1 for x in range(gridX)] for y in range(gridY)] 
-        elif cnt == 2:
+        
+        elif cnt == 2:    #get initial position
             arguments = line.strip().split()
             position = int(arguments[0]), int(arguments[1])
+            if ((position[0]>= gridX) or (position[1] >= gridY)):
+                return (-1,-1,0)
             grid[position[0]] [position[1]] = 0
-        elif cnt == 3:
+            
+        elif cnt == 3:     #get moves
             arguments = line.strip()
             moves = arguments
-        else:
+        
+        else:       #all other lines describe walls. 
             arguments = line.strip().split()
             grid[int(arguments[0])] [int(arguments[1])] = 2
 
-        print("Line {}: {}".format(cnt, line.strip()))
         line = fp.readline()
         cnt += 1
 
+    fp.close()
    
-
-
-
-    #movement list
+    #movement list from movement arguments. 
     global moveList 
     moveList= list(moves)    
 
-    #walls
-    wall1 = 1,1
-    wall2 = 1,2
 
-    #updating grid
-    grid[position[0]] [position[1]] = 0
+    #------------Helper functions-------------------
 
-
-    #print (grid)
-    #print (moveList)
-
-    # return final_pos_x, final_pos_y, coins_collected 
-
-
+    #moving along the grid. 
     def traverse():
         global position
         for i in moveList: 
             if (i == "N") :
                 newPos = position[0], position[1]+1
-                if (goldAction(newPos)) :
+                if (coinAction(newPos)) :
                     position = newPos
-                print (position)
+                #print (position)
             elif (i == "S"):
                 newPos = position[0], position[1]-1
-                if (goldAction(newPos)) :
+                if (coinAction(newPos)) :
                     position = newPos
-                print (position)
+                #print (position)
             elif (i == "E"):
                 newPos = position[0]+1, position[1]
-                if (goldAction(newPos)) :
+                if (coinAction(newPos)) :
                     position = newPos
-                print (position)
+                #print (position)
             elif (i == "W"):
                 newPos = position[0]-1, position[1]
-                if (goldAction(newPos)) :
+                if (coinAction(newPos)) :
                     position = newPos
-                print (position)
+                #print (position)
 
 
-    def goldAction(position):
+    #check next move and coin count. 
+    def coinAction(position):
         global grid
         if ((position[0] >= gridX) or (position[1] >= gridY)):
             return 0;
@@ -112,18 +113,20 @@ def pacman(input_file):
         elif (grid[position[0]][position[1]] ==2):
             return 0;
         elif (grid[position[0]][position[1]] ==1):
-            global gold 
-            gold=  gold+1
+            global coin 
+            coin=  coin+1
             grid[position[0]][position[1]] = 0
             return 1
         elif (grid[position[0]][position[1]] ==0):
             return 1
 
+    #----------------end helper functions-------------------------
+
     traverse()
-    print(gold)
-    fp.close()
+     # return final_pos_x, final_pos_y, coins_collected 
+    return(position[0], position[1], coin)
 
 
-pacman("/Users/bo/repo/C3/packman-fork/starter_code/input.txt");
-print(grid)
-print(position)
+
+#uncomment for testing. 
+#pacman("input.txt");
