@@ -19,16 +19,48 @@ def pacman(input_file):
         3. coins_collected (int) = the number of coins that have been collected by Pacman across all movements
     """
 
-    #building grid
-    gridX, gridY = 5 , 5
-    global grid 
-    grid= [[1 for x in range(gridX)] for y in range(gridY)] 
+    #read file
+    fp = open(input_file, 'r')
+
+    gridX =0
+    gridY =0
 
     #initial position
+    global position
     position = 0 , 0
+    
+    moves =""
+    wallList= []
+    global grid
+
+    line = fp.readline()
+    cnt = 1
+    while line:
+        if cnt == 1:
+            arguments = line.strip().split()
+            gridX = int(arguments[0])
+            gridY = int(arguments[1])  
+            grid= [[1 for x in range(gridX)] for y in range(gridY)] 
+        elif cnt == 2:
+            arguments = line.strip().split()
+            position = int(arguments[0]), int(arguments[1])
+            grid[position[0]] [position[1]] = 0
+        elif cnt == 3:
+            arguments = line.strip()
+            moves = arguments
+        else:
+            arguments = line.strip().split()
+            grid[int(arguments[0])] [int(arguments[1])] = 2
+
+        print("Line {}: {}".format(cnt, line.strip()))
+        line = fp.readline()
+        cnt += 1
+
+   
+
+
 
     #movement list
-    moves = "EWNNESEESWNWW"
     global moveList 
     moveList= list(moves)    
 
@@ -39,8 +71,6 @@ def pacman(input_file):
     #updating grid
     grid[position[0]] [position[1]] = 0
 
-    grid[wall1[0]] [wall1[1]] = 2
-    grid[wall2[0]] [wall2[1]] = 2
 
     #print (grid)
     #print (moveList)
@@ -48,7 +78,8 @@ def pacman(input_file):
     # return final_pos_x, final_pos_y, coins_collected 
 
 
-    def traverse(position):
+    def traverse():
+        global position
         for i in moveList: 
             if (i == "N") :
                 newPos = position[0], position[1]+1
@@ -88,8 +119,11 @@ def pacman(input_file):
         elif (grid[position[0]][position[1]] ==0):
             return 1
 
-    traverse(position)
+    traverse()
     print(gold)
+    fp.close()
 
 
-pacman("");
+pacman("/Users/bo/repo/C3/packman-fork/starter_code/input.txt");
+print(grid)
+print(position)
