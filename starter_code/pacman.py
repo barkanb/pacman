@@ -2,8 +2,9 @@
 Write a module docstring here
 """
 
-__author__ = "Your Name"
+__author__ = "Boris Barkan"
 
+gold = 0
 
 def pacman(input_file):
     """ Use this function to format your input/output arguments. Be sure not to change the order of the output arguments. 
@@ -18,4 +19,77 @@ def pacman(input_file):
         3. coins_collected (int) = the number of coins that have been collected by Pacman across all movements
     """
 
+    #building grid
+    gridX, gridY = 5 , 5
+    global grid 
+    grid= [[1 for x in range(gridX)] for y in range(gridY)] 
+
+    #initial position
+    position = 0 , 0
+
+    #movement list
+    moves = "EWNNESEESWNWW"
+    global moveList 
+    moveList= list(moves)    
+
+    #walls
+    wall1 = 1,1
+    wall2 = 1,2
+
+    #updating grid
+    grid[position[0]] [position[1]] = 0
+
+    grid[wall1[0]] [wall1[1]] = 2
+    grid[wall2[0]] [wall2[1]] = 2
+
+    #print (grid)
+    #print (moveList)
+
     # return final_pos_x, final_pos_y, coins_collected 
+
+
+    def traverse(position):
+        for i in moveList: 
+            if (i == "N") :
+                newPos = position[0], position[1]+1
+                if (goldAction(newPos)) :
+                    position = newPos
+                print (position)
+            elif (i == "S"):
+                newPos = position[0], position[1]-1
+                if (goldAction(newPos)) :
+                    position = newPos
+                print (position)
+            elif (i == "E"):
+                newPos = position[0]+1, position[1]
+                if (goldAction(newPos)) :
+                    position = newPos
+                print (position)
+            elif (i == "W"):
+                newPos = position[0]-1, position[1]
+                if (goldAction(newPos)) :
+                    position = newPos
+                print (position)
+
+
+    def goldAction(position):
+        global grid
+        if ((position[0] >= gridX) or (position[1] >= gridY)):
+            return 0;
+        elif ((position[0] <0 ) or (position[1] <0 )):
+            return 0;
+        elif (grid[position[0]][position[1]] ==2):
+            return 0;
+        elif (grid[position[0]][position[1]] ==1):
+            global gold 
+            gold=  gold+1
+            grid[position[0]][position[1]] = 0
+            return 1
+        elif (grid[position[0]][position[1]] ==0):
+            return 1
+
+    traverse(position)
+    print(gold)
+
+
+pacman("");
